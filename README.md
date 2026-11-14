@@ -52,7 +52,7 @@ FUTURE_DS_02/
 │
 ├── data/
 │   ├── Telco-Customer-Churn.csv         # Raw IBM Telco dataset (~7,043 rows)
-│   ├── cleaned_churn_data.csv           # Cleaned dataset exported for BI
+│   ├── cleaned_churn_data.csv           # Cleaned dataset exported
 │   └── README.md
 │
 ├── models/
