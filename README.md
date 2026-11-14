@@ -17,9 +17,10 @@ Customer acquisition costs 5× to 7× more than customer retention. This project
 ### Core Objectives
 1. **Zero Data Leakage Pipeline**: Strict Scikit-Learn `ColumnTransformer` + `Pipeline` preventing lookahead contamination.
 2. **Supervised Classification**: Train Decision Tree and Random Forest classifiers; optimize for **Recall** (catching ~80% of churners) and **ROC-AUC (0.8426)**.
-3. **Unsupervised Customer Personas**: Segment subscribers using K-Means ($k=3$) across tenure, monthly charges, and lifetime spend.
-4. **Interactive Cloud App**: Deploy a live multi-page Streamlit web app for real-time predictions and 3D segmentation exploration.
-5. **Business Intelligence**: Power BI dashboard for organizational reporting and high-level KPIs.
+3. **3-Fold Stratified Cross-Validation**: Prove model robustness across 3 distinct data subsets (Mean ROC-AUC: 0.8448, Accuracy: 76.36%).
+4. **Unsupervised Customer Personas**: Segment subscribers using K-Means ($k=3$) across tenure, monthly charges, and lifetime spend.
+5. **Interactive Cloud App**: Deploy a live multi-page Streamlit web app for real-time predictions and 3D segmentation exploration.
+6. **Business Intelligence**: Power BI dashboard for organizational reporting and high-level KPIs.
 
 ---
 
@@ -29,20 +30,30 @@ Access the live deployed web app: **[telco-customerchurn.streamlit.app](https://
 ### Application Features:
 - **🎯 1. Live Churn Risk Predictor**: Enter customer demographics, services, and billing details to receive instant churn probabilities, risk levels, and targeted retention offers.
 - **🧩 2. Customer Segmentation Explorer**: Explore 3 distinct customer personas with KPI summaries and an interactive 3D scatter plot.
-- **📈 3. Model Explainability & Drivers**: Inspect top feature importances (Contract type, Tenure, Electronic checks) and dimensional churn drill-downs.
+- **📈 3. Model Explainability & Drivers**: Inspect 3-fold cross-validation benchmarks, top feature importances (Contract type, Tenure, Electronic checks), and dimensional churn drill-downs.
 
 ---
 
-## 📊 Model Performance & Evaluation
+## 📊 Model Performance & Cross-Validation (3 Folds / Sets)
 
 The dataset is imbalanced (~73% retained vs ~27% churned). Because missing a churning customer (False Negative) loses permanent Customer Lifetime Value (LTV), models were optimized for **Recall** and **ROC-AUC** using `class_weight='balanced'`.
 
+### 1. Isolated Test Set Evaluation (1,409 Unseen Customers)
 | Model | ROC-AUC | Recall (Churn) | Precision | F1-Score | Overall Accuracy |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Decision Tree (Pruned)** | 0.8012 | 74.20% | 48.50% | 0.5860 | 73.80% |
-| **Random Forest (Production)** | **0.8426** | **79.14%** | **52.10%** | **0.6310** | **75.23%** |
+| **Decision Tree (Pruned)** | 0.8298 | 80.75% | 49.51% | 0.6138 | 73.03% |
+| **Random Forest (Production)** | **0.8426** | **78.61%** | **52.22%** | **0.6275** | **75.23%** |
 
-*Evaluated on an isolated test set of 1,409 unseen customer accounts.*
+### 2. 3-Fold Stratified Cross-Validation Benchmark (3 Data Sets)
+To guarantee that model performance generalizes across multiple data subsets with **zero data leakage**, we performed 3-fold stratified cross-validation (`StratifiedKFold(n_splits=3, shuffle=True)`):
+
+| Metric | Random Forest (Mean ± Std) | Decision Tree (Mean ± Std) | Stability Analysis |
+| :--- | :---: | :---: | :--- |
+| **ROC-AUC Score** | **0.8448 ± 0.0070** | 0.8287 ± 0.0057 | High discrimination across all 3 subsets (std < 0.008) |
+| **Recall (Sensitivity)** | **77.58% ± 2.07%** | 80.26% ± 2.37% | Consistently captures ~78–80% of churners |
+| **Precision** | **53.78% ± 0.16%** | 49.34% ± 1.37% | Random Forest produces significantly fewer false alarms |
+| **F1-Score** | **0.6352 ± 0.0073** | 0.6106 ± 0.0041 | Balanced harmonic mean validated across all folds |
+| **Overall Accuracy** | **76.36% ± 0.15%** | 72.82% ± 1.19% | Extremely stable generalization on unseen subsets |
 
 ---
 
@@ -52,7 +63,7 @@ FUTURE_DS_02/
 │
 ├── data/
 │   ├── Telco-Customer-Churn.csv         # Raw IBM Telco dataset (~7,043 rows)
-│   ├── cleaned_churn_data.csv           # Cleaned dataset exported
+│   ├── cleaned_churn_data.csv           # Cleaned dataset exported for BI
 │   └── README.md
 │
 ├── models/
@@ -62,7 +73,7 @@ FUTURE_DS_02/
 │   └── README.md
 │
 ├── notebooks/
-│   ├── Telco_Customer_Churn.ipynb       # Complete notebook (EDA, Preprocessing, ML, Clustering, Persistence)
+│   ├── Telco_Customer_Churn.ipynb       # Complete notebook (EDA, Preprocessing, ML, 3-Fold CV, Clustering, Persistence)
 │   └── README.md
 │
 ├── powerbi/
