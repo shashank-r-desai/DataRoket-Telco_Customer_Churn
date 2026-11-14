@@ -1,12 +1,10 @@
-## Visuals Folder
+# Visuals Directory
 
-This folder contains exported images and screenshots of key charts and dashboards.
+This folder contains high-resolution exported screenshots and visual artifacts from the dashboards and analytics modules.
 
-### Purpose
-- Provides a quick visual overview of the analysis results
-- Allows reviewers to view insights without opening Power BI files
+## Files
+- **`Churn Dashboard.png`**: High-resolution view of the dark-themed Power BI Executive Churn Dashboard.
 
-### Contents
-- Dashboard screenshots
-
-These visuals support the findings documented in the main README.
+## Purpose
+- Enables evaluators and reviewers to inspect the interactive BI reporting without needing Power BI Desktop installed locally.
+- Provides immediate visual evidence supporting the statistical findings documented across the project.
